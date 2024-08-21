@@ -1,0 +1,30 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - 8080:80
+    volumes:
+      - ./trajet-a-vide:/app
+  
+  database:
+    image: mysql:5.7.31
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_PASSWORD=trajetavide
+      - MYSQL_DATABASE=trajetavide
+      - MYSQL_USER=nika
+    volumes:
+      - db_data:/var/lib/mysql
+  
+  pma:
+    image: phpmyadmin:latest
+    ports:
+      - 8090:80
+    environment:
+      - MYSQL_DATABASE=trajetavide
+      - PMA_HOST=database
+      - UPLOAD_LIMIT=256M
+volumes:
+  db_data: 
