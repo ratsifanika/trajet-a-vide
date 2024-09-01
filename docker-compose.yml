@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - 8080:80
+      - 8060:80
     volumes:
       - ./trajet-a-vide:/app
   

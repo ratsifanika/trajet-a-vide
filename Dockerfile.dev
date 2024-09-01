@@ -23,11 +23,18 @@ RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql
 COPY conf/vhost.conf /etc/apache2/sites-available/000-default.conf
 # COPY conf/apache.conf /etc/apache2/conf-available/z-app.conf
 
-# COPY trajet-a-vide /app
+COPY trajet-a-vide/ /app/
 
-# RUN composer install -n
+# RUN chown www-data:www-data -R /app/storage /app/bootstrap/cache
+# RUN chmod -R 775 /app/storage /app/bootstrap/cache
+
+RUN composer install -n
 
 RUN a2enmod rewrite
+
+COPY entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["entrypoint.sh"]
 
 CMD ["apache2-foreground"]
 
