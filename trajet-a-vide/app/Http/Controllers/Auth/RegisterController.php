@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -44,4 +45,25 @@ class RegisterController extends Controller
             'role' => $data['role'],
         ]);
     }
+
+    public function showLoginForm()
+    {
+        return view("auth.login");
+    }
+
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required|string|min:8'
+        ]);
+
+        if (Auth::attempt($request->only("login", "password"))) {
+            return redirect()->intended('/');
+        }
+
+        return back()->withErrors('The provided credentials are wrong');
+    }
+
+
 }
