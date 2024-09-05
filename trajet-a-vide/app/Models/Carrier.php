@@ -9,7 +9,6 @@ class Carrier extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'phone_number', 'email'];
 
     public function cars()
     {
