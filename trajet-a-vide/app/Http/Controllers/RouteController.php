@@ -9,7 +9,8 @@ class RouteController
     public function create()
     {
         $cities = City::all();
-        // $cars = auth()->user()->cars;
+        $carrier = auth()->user()->carrier;
+        $cars = $carrier->cars;
 
         return view('route.create', compact('cities', 'cars'));
     }
