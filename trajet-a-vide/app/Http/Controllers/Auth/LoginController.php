@@ -20,7 +20,7 @@ class LoginController extends Controller
             'password' => 'required|string|min:8'
         ]);
 
-        if (Auth::attempt($request->only("login", "password"))) {
+        if (Auth::attempt($request->only("email", "password"))) {
             return redirect()->intended('/');
         }
 

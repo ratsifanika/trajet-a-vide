@@ -19,7 +19,8 @@ class RegisterController extends Controller
     {
         $this->validator($request->all())->validate();
 
-        $user = $this->create($request->all());
+        $this->create($request->all());
+
 
         // Redirige l'utilisateur vers la page souhaitée après l'inscription
         return redirect()->route('home');
@@ -37,12 +38,12 @@ class RegisterController extends Controller
 
     protected function create(array $data)
     {
-        return User::create([
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'role' => $data['role'],
         ]);
+        $user->assignRole($data['role']);
     }
 
     

@@ -11,7 +11,7 @@ class RouteController
         $cities = City::all();
         $carrier = auth()->user()->carrier;
         $cars = $carrier->cars;
-
+        
         return view('route.create', compact('cities', 'cars'));
     }
 
