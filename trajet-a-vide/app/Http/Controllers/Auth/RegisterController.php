@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Carrier;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -23,7 +24,7 @@ class RegisterController extends Controller
 
 
         // Redirige l'utilisateur vers la page souhaitée après l'inscription
-        return redirect()->route('home');
+        return redirect('/');
     }
 
     protected function validator(array $data)
@@ -44,6 +45,11 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
         $user->assignRole($data['role']);
+        if($data['role'] === 'carrier') {
+            Carrier::create([
+                'user_id' => $user->id
+            ]);
+        }
     }
 
     

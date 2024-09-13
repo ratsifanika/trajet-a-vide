@@ -27,6 +27,11 @@ class LoginController extends Controller
         return back()->withErrors('The provided credentials are wrong');
     }
 
+    public function logout(Request $request)
+    {
+        
+    }
+
 
 
 }

@@ -8,7 +8,7 @@
             {{ session('success') }}
         </div>
     @endif
-    <form action="{{ route('routes.store') }}" method="POST">
+    <form action="{{ route('route.store') }}" method="POST">
         @csrf
         <div class="mb-3">
             <label for="departure_city_id" class="form-label">Ville de départ</label>

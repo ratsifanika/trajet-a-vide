@@ -9,6 +9,9 @@ class Carrier extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id', 
+    ];
 
     public function cars()
     {
@@ -18,5 +21,10 @@ class Carrier extends Model
     public function routes()
     {
         return $this->hasMany(Route::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
