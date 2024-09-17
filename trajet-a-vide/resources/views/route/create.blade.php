@@ -45,6 +45,9 @@
                     <option value="{{ $car->id }}">{{ $car->brand }} - {{ $car->model }}</option>
                 @endforeach
             </select>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addCarModal">
+                Ajouter une voiture
+            </button>
         </div>
         <div class="mb-3">
             <label for="remarks" class="form-label">Remarques</label>
@@ -52,5 +55,34 @@
         </div>
         <button type="submit" class="btn btn-primary">Ajouter</button>
     </form>
+
+    
+
+</div>
+
+<!-- Modal pour ajouter une nouvelle voiture -->
+<div class="modal fade" id="addCarModal" tabindex="-1" aria-labelledby="addCarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCarModalLabel">Ajouter une nouvelle voiture</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addCarForm" hx-post="{{ route('car.store') }}" hx-target="#car" hx-swap="outerHTML">
+                    @csrf
+                    <div class="form-group">
+                        <label for="car-name">Nom de la voiture</label>
+                        <input type="text" name="brand" id="car-name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="car-image">Image de la voiture</label>
+                        <input type="file" name="image" id="car-image" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
