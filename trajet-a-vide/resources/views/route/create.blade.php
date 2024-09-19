@@ -45,7 +45,7 @@
                     <option value="{{ $car->id }}">{{ $car->brand }} - {{ $car->model }}</option>
                 @endforeach
             </select>
-            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addCarModal">
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addCarModal">
                 Ajouter une voiture
             </button>
         </div>
@@ -66,7 +66,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addCarModalLabel">Ajouter une nouvelle voiture</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="addCarForm" hx-post="{{ route('car.store') }}" hx-target="#car" hx-swap="outerHTML">
