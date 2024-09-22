@@ -28,7 +28,6 @@ COPY trajet-a-vide/ /app/
 # RUN chown www-data:www-data -R /app/storage /app/bootstrap/cache
 # RUN chmod -R 775 /app/storage /app/bootstrap/cache
 
-RUN composer install -n
 
 RUN a2enmod rewrite
 
