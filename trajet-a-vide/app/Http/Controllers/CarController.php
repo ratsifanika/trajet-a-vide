@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -13,6 +13,7 @@ class CarController extends Controller
         // Valider et créer une nouvelle voiture
         $validated = $request->validate([
             'brand' => 'required|string|max:255',
+            'model' => 'required|string|max:255',
             'image' => 'nullable|image|max:2048',
         ]);
 

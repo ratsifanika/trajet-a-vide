@@ -40,11 +40,13 @@
         </div>
         <div class="mb-3">
             <label for="car_id" class="form-label">Voiture</label>
-            <select class="form-control" id="car_id" name="car_id" required>
-                @foreach($cars as $car)
-                    <option value="{{ $car->id }}">{{ $car->brand }} - {{ $car->model }}</option>
-                @endforeach
-            </select>
+            <div id="car_choice">
+                <select class="form-control" id="car_id" name="car_id" required>
+                    @foreach($cars as $car)
+                        <option value="{{ $car->id }}">{{ $car->brand }} - {{ $car->model }}</option>
+                    @endforeach
+                </select>
+            </div>
             <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addCarModal">
                 Ajouter une voiture
             </button>
@@ -69,11 +71,15 @@
                 <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="addCarForm" hx-post="{{ route('car.store') }}" hx-target="#car" hx-swap="outerHTML">
+                <form id="addCarForm" hx-post="{{ route('car.store') }}" hx-target="#car_choice" hx-swap="innerHTML">
                     @csrf
                     <div class="form-group">
-                        <label for="car-name">Nom de la voiture</label>
-                        <input type="text" name="brand" id="car-name" class="form-control" required>
+                        <label for="car-name">Marque de la voiture</label>
+                        <input type="text" name="brand" id="car-brand" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="car-brand">Modèle de la voiture</label>
+                        <input type="text" name="brand" id="car-brand" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="car-image">Image de la voiture</label>
