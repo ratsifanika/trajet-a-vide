@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use App\Models\City;
 use App\Models\Route;
 use Illuminate\Http\Client\Request;
+use Inertia\Inertia;
 
 class RouteController
 {
@@ -12,7 +13,11 @@ class RouteController
         $carrier = auth()->user()->carrier;
         $cars = $carrier->cars;
         
-        return view('route.create', compact('cities', 'cars'));
+        // return view('route.create', compact('cities', 'cars'));
+        return Inertia::render('Routes/Create', [
+            'cities' => $cities, 
+            'cars' =>$cars
+        ]);
     }
 
     public function store(Request $request)
