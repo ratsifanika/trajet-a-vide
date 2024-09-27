@@ -5,7 +5,7 @@
         <h1>Créer un Nouveau Trajet</h1>
       </div>
       <div class="card-body">
-        <form @submit.prevent="submit">
+        <form @submit.prevent="submitRoute">
           <!-- Departure City -->
           <div class="mb-3">
             <label for="departureCity" class="form-label">Ville de départ :</label>
@@ -63,21 +63,23 @@
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title">Ajouter une nouvelle voiture</h5>
-                <button type="button" class="btn-close" @click="showCarModal = false"></button>
+                <button type="button" class="btn-close" @click="closeCarModal"></button>
               </div>
               <div class="modal-body">
-                <div class="mb-3">
-                  <label for="newCarName" class="form-label">Nom de la voiture :</label>
-                  <input type="text" v-model="newCar.name" class="form-control" id="newCarName" placeholder="Entrez le nom de la voiture">
-                </div>
-                <div class="mb-3">
-                  <label for="newCarImage" class="form-label">Image de la voiture :</label>
-                  <input type="file" @change="handleFileUpload" class="form-control" id="newCarImage">
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" @click="showCarModal = false">Fermer</button>
-                <button type="button" class="btn btn-primary" @click="addNewCar">Ajouter la voiture</button>
+                <form @submit.prevent="submitCar">
+                  <div class="mb-3">
+                    <label for="newCarName" class="form-label">Nom de la voiture :</label>
+                    <input type="text" v-model="newCar.name" class="form-control" id="newCarName" placeholder="Entrez le nom de la voiture" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="newCarImage" class="form-label">Image de la voiture :</label>
+                    <input type="file" @change="handleFileUpload" class="form-control" id="newCarImage">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="closeCarModal">Fermer</button>
+                    <button type="submit" class="btn btn-primary">Ajouter la voiture</button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
@@ -110,20 +112,45 @@ export default {
       remarks: ''
     });
 
+    const newCar = ref({
+      name: '',
+      image: null
+    });
+
     const showCarModal = ref(false);
-    const newCar = ref({ name: '', image: null });
 
     const handleFileUpload = (event) => {
-      const file = event.target.files[0];
-      newCar.value.image = file;
+      newCar.value.image = event.target.files[0];
     };
 
-    const addNewCar = () => {
-      props.cars.push({ id: props.cars.length + 1, name: newCar.value.name });
+    const closeCarModal = () => {
       showCarModal.value = false;
+      newCar.value = { name: '', image: null }; // Reset the form
     };
 
-    const submit = () => {
+    const submitCar = () => {
+      // Utiliser Inertia pour envoyer les données de la nouvelle voiture au backend
+      const formData = new FormData();
+      console.log(formData);
+      formData.append('name', newCar.value.name);
+      if (newCar.value.image) {
+        formData.append('image', newCar.value.image);
+      }
+
+      router.post('/cars/store', formData, {
+        onSuccess: () => {
+          // Fermer la modale et mettre à jour la liste des voitures
+          closeCarModal();
+        },
+        onFinish: () => {
+          // Mettre à jour les voitures sans recharger la page
+          // Pour récupérer les nouvelles voitures et les injecter dans le composant
+          router.reload({ only: ['cars'] });
+        }
+      });
+    };
+
+    const submitRoute = () => {
       router.post('/routes', form.value);
     };
 
@@ -131,9 +158,10 @@ export default {
       form,
       showCarModal,
       newCar,
-      submit,
+      submitCar,
       handleFileUpload,
-      addNewCar,
+      closeCarModal,
+      submitRoute
     };
   },
 };

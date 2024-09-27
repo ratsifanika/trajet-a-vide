@@ -10,29 +10,27 @@ class CarController extends Controller
 {
     public function store(Request $request)
     {
-        // Valider et créer une nouvelle voiture
-        $validated = $request->validate([
-            'brand' => 'required|string|max:255',
-            'model' => 'required|string|max:255',
-            'image' => 'nullable|image|max:2048',
+         // Validation des données
+         $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'image' => 'nullable|image', // Si tu veux gérer l'image de la voiture
         ]);
 
-        $car = new Car();
-        $car->brand = $validated['brand'];
-        
+        // Création de la nouvelle voiture pour le transporteur connecté
+        $user = auth()->user();
+        $carrier = $user->carrier;
+
+        $car = new Car([
+            'name' => $validated['name'],
+        ]);
+
         if ($request->hasFile('image')) {
-            // Stocker l'image (par exemple, dans le dossier storage/app/public/cars)
-            $path = $request->file('image')->store('cars', 'public');
-            $car->image = $path;
+            $car->image = $request->file('image')->store('cars');
         }
-        
-        // Associer la voiture au transporteur (Carrier)
-        $car->carrier_id = auth()->user()->carrier->id;
-        $car->save();
 
-        // Renvoyer la liste des voitures mise à jour (en HTML)
-        $cars = Car::where('carrier_id', auth()->user()->carrier->id)->get();
+        // Associer la voiture au transporteur
+        $carrier->cars()->save($car);
 
-        return view('partials.car-options', compact('cars'));
+        return back()->with('success', 'Voiture ajoutée avec succès!');
     }
 }
