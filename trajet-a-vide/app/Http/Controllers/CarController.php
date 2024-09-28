@@ -10,27 +10,36 @@ class CarController extends Controller
 {
     public function store(Request $request)
     {
-         // Validation des données
-         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'image' => 'nullable|image', // Si tu veux gérer l'image de la voiture
+          // Validation des données
+        $validated = $request->validate([
+            'brand' => 'required|string|max:255',
+            'model' => 'required|string|max:255',
+            'image' => 'nullable|image', // Validation de l'image
         ]);
 
-        // Création de la nouvelle voiture pour le transporteur connecté
+        // Création de la voiture
         $user = auth()->user();
         $carrier = $user->carrier;
 
         $car = new Car([
-            'name' => $validated['name'],
+            'brand' => $validated['brand'],
+            'model' => $validated['model'],
         ]);
-
-        if ($request->hasFile('image')) {
-            $car->image = $request->file('image')->store('cars');
-        }
 
         // Associer la voiture au transporteur
         $carrier->cars()->save($car);
 
-        return back()->with('success', 'Voiture ajoutée avec succès!');
+        // Si une image est fournie, on la sauvegarde
+        if ($request->hasFile('image')) {
+            // Stockage de l'image
+            $imagePath = $request->file('image')->store('cars');
+
+            // Enregistrement de l'image dans la table car_images
+            $car->images()->create([
+                'image_path' => $imagePath,
+            ]);
+        }
+
+        return back()->with('success', 'Voiture et première image ajoutées avec succès!');
     }
 }

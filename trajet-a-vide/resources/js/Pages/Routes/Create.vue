@@ -68,8 +68,12 @@
               <div class="modal-body">
                 <form @submit.prevent="submitCar">
                   <div class="mb-3">
-                    <label for="newCarName" class="form-label">Nom de la voiture :</label>
-                    <input type="text" v-model="newCar.name" class="form-control" id="newCarName" placeholder="Entrez le nom de la voiture" required>
+                    <label for="newCarBrand" class="form-label">Marque :</label>
+                    <input type="text" v-model="newCar.brand" class="form-control" id="newCarBand" placeholder="Entrez la marque de la voiture" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="newCarModel" class="form-label">Modèle :</label>
+                    <input type="text" v-model="newCar.model" class="form-control" id="newCarModel" placeholder="Entrez le modèle de la voiture" required>
                   </div>
                   <div class="mb-3">
                     <label for="newCarImage" class="form-label">Image de la voiture :</label>
@@ -132,7 +136,8 @@ export default {
       // Utiliser Inertia pour envoyer les données de la nouvelle voiture au backend
       const formData = new FormData();
       console.log(formData);
-      formData.append('name', newCar.value.name);
+      formData.append('brand', newCar.value.brand);
+      formData.append('model', newCar.value.model);
       if (newCar.value.image) {
         formData.append('image', newCar.value.image);
       }
