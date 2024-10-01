@@ -40,7 +40,7 @@
           <div class="mb-3">
             <label for="car" class="form-label">Voiture :</label>
             <select v-model="form.car" class="form-control" id="car">
-              <option v-for="car in cars" :key="car.id" :value="car.id">{{ car.name }}</option>
+              <option v-for="car in cars" :key="car.id" :value="car.id">{{ car.brand }} {{ car.model }}</option>
             </select>
             <button type="button" class="btn btn-link" @click="showCarModal = true">Ajouter une nouvelle voiture</button>
           </div>

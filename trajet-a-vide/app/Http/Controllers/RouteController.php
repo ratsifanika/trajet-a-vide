@@ -2,7 +2,7 @@
 namespace App\Http\Controllers;
 use App\Models\City;
 use App\Models\Route;
-use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class RouteController
