@@ -8,8 +8,26 @@
         <form @submit.prevent="submitRoute">
           <!-- Departure City -->
           <div class="mb-3">
-            <label for="departureCity" class="form-label">Ville de départ :</label>
-            <input type="text" v-model="form.departureCity" class="form-control" id="departureCity" placeholder="Entrez la ville de départ">
+            <input
+              type="text"
+              v-model="form.departureCity"
+              @input="searchCity"
+              class="form-control"
+              id="departureCity"
+              placeholder="Entrez la ville de départ"
+            />
+            <!-- Suggestions dropdown -->
+            <ul v-if="cities.length" class="list-group mt-2">
+              <li
+                v-for="city in cities"
+                :key="city.id"
+                @click="selectCity(city)"
+                class="list-group-item list-group-item-action"
+                style="cursor: pointer"
+              >
+                {{ city.name }}
+              </li>
+            </ul>
           </div>
 
           <!-- Arrival City -->
@@ -97,14 +115,15 @@
 import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import BaseLayout from '../Layouts/BaseLayout.vue';
+import axios from 'axios';
 
 export default {
-  props: {
-    cars: Array, // Récupère les voitures via Inertia depuis Laravel
-  },
-  components: {
-    BaseLayout,
-  },
+  // props: {
+  //   cars: Array, // Récupère les voitures via Inertia depuis Laravel
+  // },
+  // components: {
+  //   BaseLayout,
+  // },
   setup(props) {
     const form = ref({
       departureCity: '',
@@ -115,6 +134,35 @@ export default {
       car: null,
       remarks: ''
     });
+
+    const cities = ref([]);
+
+    const searchCity = () => {
+      // Vérifie si au moins 3 lettres ont été saisies
+      if (form.value.departureCity.length >= 3) {
+        axios.get('/cities/search', {
+          params: {
+            query: form.value.departureCity, // Envoie la ville recherchée
+          },
+        })
+        .then((response) => {
+          cities.value = response.data.cities; // Met à jour la liste des villes
+        })
+        .catch((error) => {
+          console.error('Erreur lors de la recherche de la ville:', error);
+        });
+      } else {
+        // Si moins de 3 lettres, vider les résultats
+        cities.value = [];
+      }
+    }
+
+    const selectCity = (city) => {
+      // Met à jour la ville sélectionnée
+      form.value.departureCity = city.name;
+      // Vide la liste des suggestions après la sélection
+      cities.value = [];
+    }
 
     const newCar = ref({
       name: '',
@@ -166,7 +214,10 @@ export default {
       submitCar,
       handleFileUpload,
       closeCarModal,
-      submitRoute
+      submitRoute,
+      cities,
+      searchCity,
+      selectCity
     };
   },
 };
