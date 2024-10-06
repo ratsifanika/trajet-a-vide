@@ -5,41 +5,67 @@
         <h1>Créer un Nouveau Trajet</h1>
       </div>
       <div class="card-body">
-        <form @submit.prevent="submitRoute">
-          <!-- Departure City -->
-          <div class="mb-3">
-            <input
-              type="text"
-              v-model="form.departureCity"
-              @input="searchCity"
-              class="form-control"
-              id="departureCity"
-              placeholder="Entrez la ville de départ"
-            />
-            <!-- Suggestions dropdown -->
-            <ul v-if="cities.length" class="list-group mt-2">
-              <li
-                v-for="city in cities"
-                :key="city.id"
-                @click="selectCity(city)"
-                class="list-group-item list-group-item-action"
-                style="cursor: pointer"
-              >
-                {{ city.name }}
-              </li>
-            </ul>
-          </div>
+         <!-- Departure City -->
+        <div class="mb-3">
+          <label for="departureCityName" class="form-label">Ville de départ :</label>
+          <input
+            type="text"
+            v-model="departureCityName"
+            @input="searchCity('departureCity')"
+            class="form-control"
+            id="departureCityName"
+            placeholder="Entrez la ville de départ"
+          />
+          <!-- Suggestions dropdown -->
+          <ul v-if="departureCities.length" class="list-group mt-2 city-list">
+            <li
+              v-for="city in departureCities"
+              :key="city.id"
+              @click="selectCity(city, 'departureCity')"
+              class="list-group-item list-group-item-action"
+              style="cursor: pointer"
+            >
+              {{ city.name }}
+            </li>
+          </ul>
+        </div>
 
           <!-- Arrival City -->
           <div class="mb-3">
-            <label for="arrivalCity" class="form-label">Ville d'arrivée :</label>
-            <input type="text" v-model="form.arrivalCity" class="form-control" id="arrivalCity" placeholder="Entrez la ville d'arrivée">
+          <label for="arrivalCityName" class="form-label">Ville de d'arrivée :</label>
+          <input
+            type="text"
+            v-model="arrivalCityName"
+            @input="searchCity('arrivalCity')"
+            class="form-control"
+            id="arrivalCityName"
+            placeholder="Entrez la ville de destination"
+          />
+          <!-- Suggestions dropdown -->
+          <ul v-if="arrivalCities.length" class="list-group mt-2 city-list">
+            <li
+              v-for="city in arrivalCities"
+              :key="city.id"
+              @click="selectCity(city, 'arrivalCity')"
+              class="list-group-item list-group-item-action"
+              style="cursor: pointer"
+            >
+              {{ city.name }}
+            </li>
+          </ul>
           </div>
-
+          
+        <form @submit.prevent="form.post('/routes', {
+          onError: (errors) => {
+            console.log(errors); // Affiche les erreurs dans la console du navigateur
+          }
+        })">
+          <input type="hidden" v-model="form.selectedDepartureCityId" name="departure_city_id" />
+          <input type="hidden" v-model="form.selectedArrivalCityId" name="arrival_city_id" />
           <!-- Departure Date and Time -->
           <div class="mb-3">
             <label for="departureDateTime" class="form-label">Date et Heure de départ :</label>
-            <input type="datetime-local" v-model="form.departureDateTime" class="form-control" id="departureDateTime">
+            <input type="datetime-local" v-model="form.departureDateTime" class="form-control" id="departureDateTime" name="departure_date_time">
           </div>
 
           <!-- Available Seats -->
@@ -57,9 +83,10 @@
           <!-- Car Selection -->
           <div class="mb-3">
             <label for="car" class="form-label">Voiture :</label>
-            <select v-model="form.car" class="form-control" id="car">
+            <select v-model="form.car_id" class="form-control" id="car">
               <option v-for="car in cars" :key="car.id" :value="car.id">{{ car.brand }} {{ car.model }}</option>
             </select>
+            <span v-if="form.errors.car" class="text-danger">{{ form.errors.car }}</span>
             <button type="button" class="btn btn-link" @click="showCarModal = true">Ajouter une nouvelle voiture</button>
           </div>
 
@@ -111,57 +138,95 @@
   </base-layout>
 </template>
 
+<style>
+  .city-list {
+  max-height: 100px; /* Limite la hauteur maximale à 200px */
+  overflow-y: auto;  /* Active le défilement vertical si nécessaire */
+  border: 1px solid #ccc; /* Optionnel : ajoute une bordure */
+}
+</style>
+
 <script>
 import { ref } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { router, useForm} from '@inertiajs/vue3';
 import BaseLayout from '../Layouts/BaseLayout.vue';
 import axios from 'axios';
 
 export default {
-  // props: {
-  //   cars: Array, // Récupère les voitures via Inertia depuis Laravel
-  // },
-  // components: {
-  //   BaseLayout,
-  // },
-  setup(props) {
-    const form = ref({
-      departureCity: '',
-      arrivalCity: '',
+  props: {
+    cars: Array, // Récupère les voitures via Inertia depuis Laravel
+  },
+  components: {
+    BaseLayout,
+  },
+  setup() {
+    const form = useForm({
+      selectedDepartureCityId: null,
+      selectedArrivalCityId: null,
       departureDateTime: '',
       availableSeats: '',
       pricePerPassenger: '',
-      car: null,
+      car_id: null,
       remarks: ''
     });
 
-    const cities = ref([]);
+    const departureCityName = ref('');
+    const arrivalCityName = ref('');
+    const departureCities = ref([]);
+    const arrivalCities = ref([]);
 
-    const searchCity = () => {
+    const searchCity = (target) => {
+      let query = '';
+      if (target == 'departureCity') {
+        query = departureCityName.value
+      } else {
+        query = arrivalCityName.value
+      }
       // Vérifie si au moins 3 lettres ont été saisies
-      if (form.value.departureCity.length >= 3) {
+      if (query.length >= 3) {
         axios.get('/cities/search', {
           params: {
-            query: form.value.departureCity, // Envoie la ville recherchée
+            query: query, // Envoie la ville recherchée
           },
         })
         .then((response) => {
-          cities.value = response.data.cities; // Met à jour la liste des villes
+          if (target == 'departureCity') {
+            departureCities.value = response.data.cities; // Met à jour la liste des villes
+          } else {
+            arrivalCities.value = response.data.cities; // Met à jour la liste des villes
+          }
+       
         })
         .catch((error) => {
           console.error('Erreur lors de la recherche de la ville:', error);
         });
       } else {
         // Si moins de 3 lettres, vider les résultats
-        cities.value = [];
+        if (target == 'departureCity') {
+            departureCities.value = [];
+          } else {
+            arrivalCities.value = [];
+          }
+        
       }
     }
 
-    const selectCity = (city) => {
-      // Met à jour la ville sélectionnée
-      form.value.departureCity = city.name;
-      // Vide la liste des suggestions après la sélection
-      cities.value = [];
+    const selectCity = (city, target) => {
+      if (target == 'departureCity') {
+        console.log(city.name)
+        // Met à jour la ville sélectionnée
+        form.selectedDepartureCityId = city.id;
+        departureCityName.value = city.name;
+        // Vide la liste des suggestions après la sélection
+        departureCities.value = [];
+      } else {
+        // Met à jour la ville sélectionnée
+        form.selectedArrivalCityId= city.id;
+        arrivalCityName.value = city.name;
+        // Vide la liste des suggestions après la sélection
+        arrivalCities.value = [];
+      }
+     
     }
 
     const newCar = ref({
@@ -204,6 +269,7 @@ export default {
     };
 
     const submitRoute = () => {
+      console.log('xxxx');
       router.post('/routes', form.value);
     };
 
@@ -215,9 +281,12 @@ export default {
       handleFileUpload,
       closeCarModal,
       submitRoute,
-      cities,
+      departureCities,
+      arrivalCities,
       searchCity,
-      selectCity
+      selectCity,
+      departureCityName,
+      arrivalCityName
     };
   },
 };
