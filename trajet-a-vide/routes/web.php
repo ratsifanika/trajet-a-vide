@@ -17,6 +17,7 @@ Route::middleware(['auth', 'role:carrier'])->group(function () {
     Route::post('/routes',[RouteController::class, 'store'])->name('route.store');
     Route::post('/cars/store', [CarController::class, 'store'])->name('car.store');
 });
+Route::get('/routes/search', [RouteController::class, 'searchRoutes']);
 
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);

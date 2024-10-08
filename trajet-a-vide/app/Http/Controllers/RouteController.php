@@ -45,4 +45,17 @@ class RouteController
             return Redirect::back()->withErrors($e->errors())->withInput();
         }
     }
+
+    public function searchRoutes(Request $request)
+    {
+        $departureCityId = $request->departure_city_id;
+        $arrivalCityId = $request->arrival_city_id;
+
+        $routes = Route::where('departure_city_id', $departureCityId)
+            ->where('arrival_city_id', $arrivalCityId)
+            ->with('car', 'departureCity', 'arrivalCity')
+            ->get();
+
+        return response()->json(['routes' => $routes]);
+    }
 }
