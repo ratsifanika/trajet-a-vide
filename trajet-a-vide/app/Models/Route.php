@@ -16,7 +16,8 @@ class Route extends Model
         'price_per_passenger', 
         'available_seats', 
         'remarks', 
-        'car_id'
+        'car_id',
+        'carrier_id'
     ];
 
     public function departureCity()

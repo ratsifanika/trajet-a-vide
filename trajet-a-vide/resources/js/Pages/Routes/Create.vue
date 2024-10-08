@@ -60,24 +60,26 @@
             console.log(errors); // Affiche les erreurs dans la console du navigateur
           }
         })">
-          <input type="hidden" v-model="form.selectedDepartureCityId" name="departure_city_id" />
-          <input type="hidden" v-model="form.selectedArrivalCityId" name="arrival_city_id" />
+          <input type="hidden" v-model="form.departure_city_id" name="departure_city_id" />
+          <input type="hidden" v-model="form.arrival_city_id" name="arrival_city_id" />
           <!-- Departure Date and Time -->
           <div class="mb-3">
-            <label for="departureDateTime" class="form-label">Date et Heure de départ :</label>
-            <input type="datetime-local" v-model="form.departureDateTime" class="form-control" id="departureDateTime" name="departure_date_time">
+            <label for="departure_date_time" class="form-label">Date et Heure de départ :</label>
+            <input type="datetime-local" v-model="form.departure_date_time" class="form-control" id="departure_date_time" name="departure_date_time">
           </div>
 
           <!-- Available Seats -->
           <div class="mb-3">
-            <label for="availableSeats" class="form-label">Places disponibles :</label>
-            <input type="number" v-model="form.availableSeats" class="form-control" id="availableSeats" placeholder="Entrez le nombre de places disponibles">
+            <label for="available_seats" class="form-label">Places disponibles :</label>
+            <input type="number" v-model="form.available_seats" class="form-control" id="available_seats" 
+            placeholder="Entrez le nombre de places disponibles" name="available_seats">
           </div>
 
           <!-- Price per Passenger -->
           <div class="mb-3">
-            <label for="pricePerPassenger" class="form-label">Prix par passager :</label>
-            <input type="number" v-model="form.pricePerPassenger" class="form-control" id="pricePerPassenger" placeholder="Entrez le prix par passager">
+            <label for="price_per_passenger" class="form-label">Prix par passager :</label>
+            <input type="number" v-model="form.price_per_passenger" class="form-control" id="price_per_passenger"
+             placeholder="Entrez le prix par passager" name="price_per_passenger">
           </div>
 
           <!-- Car Selection -->
@@ -161,11 +163,11 @@ export default {
   },
   setup() {
     const form = useForm({
-      selectedDepartureCityId: null,
-      selectedArrivalCityId: null,
-      departureDateTime: '',
-      availableSeats: '',
-      pricePerPassenger: '',
+      departure_city_id: null,
+      arrival_city_id: null,
+      departure_date_time: '',
+      available_seats: '',
+      price_per_passenger: '',
       car_id: null,
       remarks: ''
     });
@@ -215,13 +217,13 @@ export default {
       if (target == 'departureCity') {
         console.log(city.name)
         // Met à jour la ville sélectionnée
-        form.selectedDepartureCityId = city.id;
+        form.departure_city_id = city.id;
         departureCityName.value = city.name;
         // Vide la liste des suggestions après la sélection
         departureCities.value = [];
       } else {
         // Met à jour la ville sélectionnée
-        form.selectedArrivalCityId= city.id;
+        form.arrival_city_id= city.id;
         arrivalCityName.value = city.name;
         // Vide la liste des suggestions après la sélection
         arrivalCities.value = [];

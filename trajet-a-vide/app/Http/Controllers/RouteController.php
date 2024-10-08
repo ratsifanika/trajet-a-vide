@@ -36,7 +36,8 @@ class RouteController
                 'available_seats' => 'required|integer',
                 'car_id' => 'required|exists:cars,id',
             ]);
-    
+            $carrier = auth()->user()->carrier;
+            $validated['carrier_id'] = $carrier->id;
             Route::create($validated); // Utilise les données validées
     
             return redirect()->route('home')->with('success', 'Trajet ajouté avec succès');
