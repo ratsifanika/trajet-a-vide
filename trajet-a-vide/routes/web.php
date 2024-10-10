@@ -19,6 +19,9 @@ Route::middleware(['auth', 'role:carrier'])->group(function () {
 });
 Route::get('/routes/search', [RouteController::class, 'searchRoutes']);
 
+Route::get('/route/{id}', [RouteController::class, 'show'])->name('route.show');
+Route::post('/route/{id}/booking', [RouteController::class, 'book'])->name('route.show');
+
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

@@ -25,6 +25,29 @@ class RouteController
         ]);
     }
 
+    public function show($id)
+    {
+        $route = Route::with('car', 'car.images', 'departureCity', 'arrivalCity')->findOrFail($id);
+        
+        return Inertia::render('Routes/Booking', [
+            'route' => $route
+        ]);
+    }
+
+    public function book(Request $request, $id)
+    {
+        $route = Route::findOrFail($id);
+
+        $request->validate([
+            'reserved_seats' => 'required|integer|min:1|max:' . $route->available_seats,
+        ]);
+
+        // Réservation logic (ex : créer une réservation, réduire le nombre de places disponibles)
+        // Code pour enregistrer la réservation dans la base de données
+
+        return redirect()->route('home')->with('success', 'Réservation effectuée avec succès.');
+    }
+
     public function store(Request $request)
     {
         try {

@@ -61,7 +61,7 @@
       <div class="mt-5" v-if="routes.length">
         <h2 class="text-center">Résultats de la recherche</h2>
         <div class="list-group">
-          <div v-for="route in routes" :key="route.id" class="list-group-item">
+          <div v-for="route in routes" :key="route.id" class="list-group-item" @click="goToBooking(route.id)">
             <h5>{{ route.departure_city.name }} → {{ route.arrival_city.name }}</h5>
             <p>Voiture: {{ route.car.brand }} {{ route.car.model }}</p>
             <p>Départ: {{ route.departure_date_time }}</p>
@@ -77,6 +77,7 @@
   <script>
   import { ref } from 'vue';
   import axios from 'axios';
+  import { router } from '@inertiajs/vue3';
   import BaseLayout from './Layouts/BaseLayout.vue';
   
   export default {
@@ -140,6 +141,10 @@
           console.error('Erreur lors de la recherche des trajets:', error);
         }
       };
+
+      const goToBooking = (routeId) => {
+        router.visit(`/route/${routeId}`);
+      };
   
       return {
         searchForm,
@@ -148,6 +153,7 @@
         searchCities,
         selectCity,
         submitSearch,
+        goToBooking
       };
     },
   };
