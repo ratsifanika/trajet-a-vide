@@ -32,14 +32,14 @@
   
           <form @submit.prevent="submitBooking">
             <div class="mb-3">
-              <label for="reservedSeats" class="form-label">Nombre de places à réserver :</label>
+              <label for="reserved_seats" class="form-label">Nombre de places à réserver :</label>
               <input
                 type="number"
-                v-model="form.reservedSeats"
+                v-model="form.reserved_seats"
                 min="1"
                 :max="route.available_seats"
                 class="form-control"
-                id="reservedSeats"
+                id="reserved_seats"
                 required
               />
             </div>
@@ -66,7 +66,7 @@
     },
     setup(props) {
       const form = useForm({
-        reservedSeats: ''
+        reserved_seats: ''
       });
   
       const submitBooking = () => {

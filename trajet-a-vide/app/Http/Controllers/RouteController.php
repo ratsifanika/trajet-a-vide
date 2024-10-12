@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+use App\Models\Booking;
 use App\Models\Car;
 use App\Models\City;
 use App\Models\Route;
@@ -38,12 +39,16 @@ class RouteController
     {
         $route = Route::findOrFail($id);
 
-        $request->validate([
+        $validated = $request->validate([
             'reserved_seats' => 'required|integer|min:1|max:' . $route->available_seats,
         ]);
-
-        // Réservation logic (ex : créer une réservation, réduire le nombre de places disponibles)
-        // Code pour enregistrer la réservation dans la base de données
+        $validated['user_id'] = auth()->user()->getAuthIdentifier() ?: auth()->user()->id;
+        $validated['route_id'] = $route->id;
+        Booking::create($validated);
+        $availableSeats = $route->available_seats - $validated['reserved_seats'];
+        $route->update([
+            'available_seats'=> $availableSeats
+        ]);
 
         return redirect()->route('home')->with('success', 'Réservation effectuée avec succès.');
     }
@@ -80,5 +85,35 @@ class RouteController
             ->get();
 
         return response()->json(['routes' => $routes]);
+    }
+
+    public function adminRoutes()
+    {
+        $carrier = auth()->user()->carrier;
+
+        $routes = Route::with(['bookings.user', 'bookings.messages' => function ($query) {
+            $query->latest()->take(1); // Récupérer le dernier message de chaque client
+        }])->where('carrier_id', $carrier->id)->get();
+
+        return Inertia::render('Admin/Routes', [
+            'routes' => $routes,
+        ]);
+    }
+
+    public function validateBooking(Request $request, $id)
+    {
+        $booking = Booking::findOrFail($id);
+        $booking->update(['validated' => true]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function manageRoute($id)
+    {
+        $route = Route::with('car', 'bookings')->findOrFail($id);
+
+        return Inertia::render('Admin/ManageRoute', [
+            'route' => $route,
+        ]);
     }
 }

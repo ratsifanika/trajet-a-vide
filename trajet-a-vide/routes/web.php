@@ -16,11 +16,16 @@ Route::middleware(['auth', 'role:carrier'])->group(function () {
     Route::get('/routes/create',[RouteController::class, 'create'])->name('route.create');
     Route::post('/routes',[RouteController::class, 'store'])->name('route.store');
     Route::post('/cars/store', [CarController::class, 'store'])->name('car.store');
+    Route::get('/route/{id}', [RouteController::class, 'show'])->name('route.show');
+    Route::post('/route/{id}/booking', [RouteController::class, 'book'])->name('route.show');
+
+    Route::get('/admin/routes', [RouteController::class, 'adminRoutes'])->name('admin.routes');
+    Route::post('/admin/bookings/{id}/validate', [RouteController::class, 'validateBooking']);
+    Route::get('/admin/routes/{id}/manage', [RouteController::class, 'manageRoute']);
 });
 Route::get('/routes/search', [RouteController::class, 'searchRoutes']);
 
-Route::get('/route/{id}', [RouteController::class, 'show'])->name('route.show');
-Route::post('/route/{id}/booking', [RouteController::class, 'book'])->name('route.show');
+
 
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);

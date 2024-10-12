@@ -39,4 +39,10 @@ class Route extends Model
     {
         return $this->belongsTo(Carrier::class);
     }
+
+    // Relation avec les réservations
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 }
