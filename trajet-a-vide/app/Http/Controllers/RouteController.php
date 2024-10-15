@@ -14,8 +14,8 @@ class RouteController
     {
         $carrier = auth()->user()->carrier;
         $cars = $carrier->cars;
-        
-        return Inertia::render('Routes/Create', [ 
+
+        return Inertia::render('Routes/Create', [
             'cars' =>$cars->map(function (Car $car) {
                 return [
                     'id' => $car->id,
@@ -29,7 +29,7 @@ class RouteController
     public function show($id)
     {
         $route = Route::with('car', 'car.images', 'departureCity', 'arrivalCity')->findOrFail($id);
-        
+
         return Inertia::render('Routes/Booking', [
             'route' => $route
         ]);
@@ -67,7 +67,7 @@ class RouteController
             $carrier = auth()->user()->carrier;
             $validated['carrier_id'] = $carrier->id;
             Route::create($validated); // Utilise les données validées
-    
+
             return redirect()->route('home')->with('success', 'Trajet ajouté avec succès');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return Redirect::back()->withErrors($e->errors())->withInput();
