@@ -4,6 +4,7 @@
       <form @submit.prevent="updateRoute">
         <input v-model="form.departure_date_time" type="datetime-local" />
         <input v-model="form.available_seats" type="number" min="1" />
+        {{ route }}
         <select v-model="form.car_id">
           <option v-for="car in route.cars" :key="car.id" :value="car.id">
             {{ car.brand }} {{ car.model }}

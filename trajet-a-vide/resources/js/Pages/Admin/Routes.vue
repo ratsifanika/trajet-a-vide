@@ -30,6 +30,7 @@
   <script>
   import { ref } from "vue";
   import BaseLayout from '../Layouts/BaseLayout.vue';
+  import { router } from '@inertiajs/vue3';
   
   export default {
     components: {
@@ -60,7 +61,7 @@
       };
   
       const manageRoute = (id) => {
-        Inertia.visit(`/admin/routes/${id}/manage`);
+        router.visit(`/admin/routes/${id}/manage`);
       };
   
       return { expandedRoute, toggleRoute, confirmValidation, showModal, validateBooking, manageRoute };

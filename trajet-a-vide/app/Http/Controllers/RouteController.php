@@ -110,7 +110,7 @@ class RouteController
 
     public function manageRoute($id)
     {
-        $route = Route::with('car', 'bookings')->findOrFail($id);
+        $route = Route::with('car', 'bookings.user')->findOrFail($id);
 
         return Inertia::render('Admin/ManageRoute', [
             'route' => $route,
