@@ -1,10 +1,77 @@
 <template>
-    <div>
+  <base-layout>
+  <div>
       <h1>Gérer l'annonce</h1>
+      <div
+        class="container"
+      >
+        <div
+          class="row justify-content-center align-items-center g-2 mb-3"
+        >
+          <div class="col col-4">
+            <div class="card">
+              <div class="card-body">
+                <p class="card-text">
+                  {{ route.departure_city.name }}
+                </p>
+              </div>
+            </div>
+            
+          </div>
+          <div class="col col-4 text-center"><font-awesome-icon :icon="['fas', 'arrow-right']" /></div>
+          <div class="col col-4">
+            <div class="card">
+              <div class="card-body">
+                <p class="card-text">
+                  {{ route.arrival_city.name }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="row justify-content-center align-items-center g-2"
+        >
+          <div class="col col-7">
+            <div class="card w-50 mb-3">
+            <div class="card-body">
+              <p class="card-text">
+                Départ le {{ formatDate(route.departure_date_time) }}
+              </p>
+            </div>
+        </div>
+
+        <div class="card w-50 mb-3">
+          <div class="card-body">
+            <p class="card-text">
+              Places disponibles
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+              >
+              <font-awesome-icon :icon="['fas', 'minus']" />
+              </button>
+              10
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+              >
+              <font-awesome-icon :icon="['fas', 'plus']" />
+              </button>
+              
+            </p>
+          </div>
+        </div>
+          </div>
+          <div class="col col-5">{{ route.car }}</div>
+         
+        </div>
+        
+        
+      </div>
+      
       <form @submit.prevent="updateRoute">
-        <input v-model="form.departure_date_time" type="datetime-local" />
         <input v-model="form.available_seats" type="number" min="1" />
-        {{ route }}
         <select v-model="form.car_id">
           <option v-for="car in route.cars" :key="car.id" :value="car.id">
             {{ car.brand }} {{ car.model }}
@@ -18,17 +85,25 @@
         <button @click="replyMessage(booking.id)">Répondre</button>
       </div>
     </div>
+  </base-layout>
+    
   </template>
   
   <script>
-  import { ref } from "vue";
   import { useForm } from "@inertiajs/vue3";
-  
+  import BaseLayout
+   from "../Layouts/BaseLayout.vue";
+  import { formatDate } from "../../utils";
+
   export default {
+    components: {
+      BaseLayout
+    }
+      
+    ,
     props: ["route"],
     setup(props) {
       const form = useForm({
-        departure_date_time: props.route.departure_date_time,
         available_seats: props.route.available_seats,
         car_id: props.route.car_id,
       });
@@ -41,7 +116,7 @@
         // Code pour répondre à un message (non implémenté ici)
       };
   
-      return { form, updateRoute, replyMessage };
+      return { form, updateRoute, replyMessage, formatDate };
     },
   };
   </script>
