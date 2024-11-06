@@ -32,8 +32,8 @@ class CarController extends Controller
         // Si une image est fournie, on la sauvegarde
         if ($request->hasFile('image')) {
             // Stockage de l'image
-            $imagePath = $request->file('image')->store('cars');
-
+            $imagePath = $request->file('image')->store('public/cars');
+            $imagePath = str_replace('public/', '', $imagePath);
             // Enregistrement de l'image dans la table car_images
             $car->images()->create([
                 'image_path' => $imagePath,
